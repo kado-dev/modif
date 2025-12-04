@@ -1,0 +1,9 @@
+.kotakgrafik{
+	margin-top:20px;
+	background:#fff;
+	padding:30px 30px;
+	border:1px solid #fff;
+	border-radius:10px 10px 10px 10px;
+	/* box-shadow:0px 0px 12px #cecece; */
+	box-shadow: 0 4px 6px -2px #a8a8a8;
+}

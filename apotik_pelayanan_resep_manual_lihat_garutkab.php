@@ -1,0 +1,454 @@
+<?php
+	session_start();
+	include "config/helper_pasienrj.php";
+	$noresep = $_GET['norsp'];
+	
+	// tbresep
+	$data_resep = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT * FROM `$tbresep` WHERE `NoResep`='$noresep'"));
+	$idpasienrj = $data_resep['IdPasienrj'];
+	$tbwaktupelayanan = "tbwaktupelayanan_".$kodepuskesmas;
+	
+	// update waktu farmasi awal
+	mysqli_query($koneksi,"UPDATE `$tbwaktupelayanan` SET `FarmasiAwal`=NOW() WHERE `NoRegistrasi` = '$noresep' AND FarmasiAwal = '0000-00-00 00:00:00'");
+
+?>
+<style type="text/css">
+	.formedit{
+		width: 50px !important;
+	}
+</style>
+<div class="tableborderdiv">
+	<div class="row">	
+		<div class="col-xs-12">
+			<a href="index.php?page=apotik_pelayanan_resep" class="backform"><i class="fa fa-chevron-circle-left fa fa-2x"></i></a>
+			<h3 class="judul"><b>NOMOR RESEP, #<?php echo substr($data_resep['NoResep'], -3);?></b></h3>
+			<div class="formbg" style="padding: 30px 50px 50px 50px;">
+				<table width="100%">
+					<tr>	
+						<td colspan="3"><b style="font-size:22px;"><?php echo $data_resep['NamaPasien']." (".$data_resep['UmurTahun']."Th ".$data_resep['UmurBulan']." Bl)";?></b></td>
+					</tr>
+					<tr>	
+						<td width="11%">Tgl.Resep</td>
+						<td width="1%">:</td>
+						<td width="88%"><?php echo date('d-m-Y G:i:s', strtotime($data_resep['TanggalResep']));?></td>
+					</tr>
+					<tr>	
+						<td>Poli</td>
+						<td>:</td>
+						<td><?php echo $data_resep['Pelayanan'];?></td>
+					</tr>
+					<tr>	
+						<td>Jaminan</td>
+						<td>:</td>
+						<td><?php echo $data_resep['StatusBayar'];?></td>
+					</tr>
+					<tr>	
+						<td>Diagnosa</td>
+						<td>:</td>
+						<td>
+							<?php 
+								if($data_resep['Diagnosa'] != ""){
+									echo $data_resep['Diagnosa'];
+								}else{
+									// cek diagnosa pasien
+									$str_diagnosapsn = "SELECT `KodeDiagnosa` FROM `$tbdiagnosapasien` WHERE `NoRegistrasi`='$noresep'";
+									$query_diagnosapsn = mysqli_query($koneksi,$str_diagnosapsn);
+									while($data_diagnosapsn = mysqli_fetch_array($query_diagnosapsn)){
+										$array_data[$no][] = $data_diagnosapsn['KodeDiagnosa'];
+									}
+									if ($array_data[$no] != ''){
+										$data_dgs = implode(",", $array_data[$no]);
+									}else{
+										$data_dgs ="";
+									}
+									echo $data_dgs;
+								}									
+							?>
+						</td>
+					</tr>
+					<tr>	
+						<td>Alamat</td>
+						<td>:</td>
+						<td>
+							<?php 
+								$dtkk = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT `Alamat`,`RT`,`RW`,`Kelurahan` FROM `$tbkk` WHERE `NoIndex`='$data_resep[NoIndex]'"));
+								echo $dtkk['Alamat'].", RT.".$dtkk['RT']." RW.".$dtkk['RW']." Kel.".$dtkk['Kelurahan'];
+							?>
+						</td>
+					</tr>
+				</table>
+				<hr>
+				<?php		
+					$cekresep = mysqli_num_rows(mysqli_query($koneksi, "SELECT * FROM `$tbresepdetail` WHERE `IdPasienrj`='$idpasienrj'"));
+					if($cekresep  == 0){
+				?>		
+						<div class="alert alert-block alert-danger fade in">
+							Tidak ada resep, klik menu <a href="index.php?page=apotik_pelayanan_resep"><b style="color: #A94956;">Back</b></a>
+						</div>	
+						<a href="?page=poli_periksa_edit&no=<?php echo $noresep;?>&pelayanan=<?php echo $data_resep['Pelayanan'];?>" class="btnsimpan" style="text-align: center;" target="_blank">LIHAT DATA PEMERIKSAAN</a>						
+				<?php		
+						die();								
+					}	
+				?>
+								
+				<div class = "row">
+				<form class="form-horizontal" action="index.php?page=apotik_pelayanan_resep_manual_lihat_proses_garutkab" method="post" role="form">
+					<table class="table-judul">
+						<thead>
+							<tr>
+								<th width="9%">RACIKAN</th>
+								<th width="50%">NAMA OBAT</th>
+								<th>SIGNA</th>
+								<th width="7%">JML</th>
+								<th>ANJURAN</th>
+								<th width="5%"><i class="fa fa-plus btnadd"></i></th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr class="trclones" style="display: none">
+								<td colspan="6">
+									<table class="table" style="background: #f5f5f5;margin: 0px">
+										<tr>
+											<td width="9%">
+												<select class="form-control sts_racikan" name="status_racikan[]">
+													<option value="false">Tidak</option>
+													<option value="true">Ya</option>										
+												</select>
+											</td>
+											<td width="50%">
+												<input type="text" class="form-control therapybpjs">
+												<input type="hidden" name="kodebarang[]" class="form-control kodeobatlokal">
+												<input type="hidden" name="nobatch[]" class="form-control nobatch">
+												<input type="hidden" class="form-control kodeobatbpjs">
+												<input type="hidden" class="form-control namaobatbpjs">
+											</td>
+											<td class="hides">
+												<div class="col-sm-6">
+													<input type="text" name="signa1[]" class="form-control signa1">						
+												</div>
+												<div class="col-sm-6">
+													<input type="text" name="signa2[]" class="form-control signa2">									
+												</div>
+											</td>
+											<td width="7%">
+												<input type="text" name="jumlah[]" class="form-control jumlah" maxlength="4">
+											</td>
+											<td class="hides">
+												<select name="anjuran[]" class="form-control anjuranterapi">
+													<option value="-">--Pilih--</option>
+													<option value="Lainnya">Lainnya</option>
+													<?php
+													$dtanjuranary = mysqli_query($koneksi,"SELECT Anjuran FROM `tbapotikanjuran`");
+													while($dtanjuran = mysqli_fetch_assoc($dtanjuranary)){
+														echo "<option value='$dtanjuran[Anjuran]'>$dtanjuran[Anjuran]</option>";
+													}
+													?>
+												</select>
+											</td>
+											<td class="ket_racikantr" style="display: none;"><input type="text" class="form-control ket_racikan" name="ket_racikan" placeholder="Keterangan racikan, misal: m.f.pulv.no x"/></td>
+											<td width="5%" align="center">
+												<i class="fa fa-minus btnremove"></i>
+											</td>
+										</tr>
+										<tr style="display: none" class="formanjuranlainnya">
+											<td colspan="5"><input type="text" class="form-control anjuranterapilain" name="anjuranterapilain[]"></td>
+										</tr>
+									</table>
+								</td>								
+							</tr>
+						</tbody>	
+					</table></br>
+					<input type="hidden" name="noresep" class="form-control" value="<?php echo $data_resep['NoResep'];?>">	
+					<input type="hidden" name="poli" class="form-control" value="<?php echo $data_resep['Pelayanan'];?>">	
+					<div class="row">
+						<div class="col-sm-12">
+							<button type="submit" class="btnsimpan">SIMPAN</button>
+						</div>
+					</div>						
+				</form>
+				</div>
+				<hr>
+				<div class = "row">				
+				<table class="table-judul">
+					<thead>
+						<tr>
+							<th width="4%">NO.</th>
+							<th width="8%">KODE</th>
+							<th width="8%">RACIKAN</th>
+							<th width="20%">NAMA OBAT</th>
+							<th width="8%">SIGNA</th>
+							<th width="8%">JML</th>
+							<th width="12%">ANJURAN</th>
+							<th width="6%">#</th>
+						</tr>
+					</thead>		
+					<tbody>
+						<?php
+						$no = 0;			
+						$query = mysqli_query($koneksi, "SELECT * FROM `$tbresepdetail` WHERE `NoResep`='$noresep'");
+						while($data = mysqli_fetch_assoc($query)){
+							$no = $no + 1;
+							$kodebarang = $data['KodeBarang'];
+							$nobatch = $data['NoBatch'];
+							
+							// ambil dari tbapotikstok, karena saat penulisan resep datanya dari tabel tersebut
+							$dtobat = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT * FROM `tbapotikstok` WHERE `KodeBarang`='$kodebarang' AND `NoBatch`='$nobatch' AND `KodePuskesmas`='$kodepuskesmas'"));
+						?>							
+							<tr>
+								<td align="center"><?php echo $no;?></td>
+								<td align="center"><?php echo $data['KodeBarang'];?></td>
+								<td align="center">
+									<?php 
+									if($data['racikan'] == 'true'){
+										echo "Ya";
+									}else{
+										echo "Tidak";
+									}
+									?>
+								</td>
+								<td align="left"><?php echo $dtobat['NamaBarang'];?>, Ket: <?php echo $data['KeteranganRacikan'];?></td>
+								<td align="center" data-batch="<?php echo $data['NoBatch'];?>" data-kodebarang="<?php echo $data['KodeBarang'];?>" data-idr="<?php echo $data['IdResepDetail'];?>" class="editsigna"><?php echo $data['signa1']." x ".$data['signa2'];?></td>
+								<td align="right" data-batch="<?php echo $data['NoBatch'];?>" data-kodebarang="<?php echo $data['KodeBarang'];?>" data-idr="<?php echo $data['IdResepDetail'];?>" class="editjmlobat"><?php echo $data['jumlahobat'];?></td>
+								<td align="center" class="anjuaranclstd" data-idr="<?php echo $data['IdResepDetail'];?>">
+									<span><?php echo $data['AnjuranResep'];?></span>
+									<select class="form-control anjuranterapi_edit" style="display: none;">
+										<option value="">Pilih</option>
+										<option value="Lainnya">Lainnya</option>
+										<?php
+										$dtanjuranary2 = mysqli_query($koneksi,"SELECT Anjuran FROM `tbapotikanjuran`");
+										while($dtanjuran2 = mysqli_fetch_assoc($dtanjuranary2)){
+											if($data['AnjuranResep'] == $dtanjuran2['Anjuran']){
+												echo "<option value='$dtanjuran2[Anjuran]' SELECTED>$dtanjuran2[Anjuran]</option>";
+											}else{
+												echo "<option value='$dtanjuran2[Anjuran]'>$dtanjuran2[Anjuran]</option>";
+											}
+										}
+										?>
+									</select>
+									<input type="text" class="form-control anjuranterapilain_edit" style="display: none;">
+								</td>
+								<td align="center">
+									<a href="?page=apotik_pelayanan_resep_manual_hapus_garutkab&id=<?php echo $data['IdResepDetail'];?>&nr=<?php echo $noresep;?>&kb=<?php echo $kodebarang;?>&bt=<?php echo $nobatch;?>&jml=<?php echo $data['jumlahobat'];?>" class="btn btn-xs btn-danger">HAPUS</a>
+								</td>		
+							</tr>
+						<?php
+						}
+						?>	
+					</tbody>
+				</table><br/>
+				</div>
+				<table class="table-judul" width="100%">
+					<tr>
+						<td class="col-sm-2">Informasi Penggnaan Obat*</td>
+						<td class="col-sm-10">
+							<?php
+								$arrpio = explode(",",$data_resep['Pio']);
+							?>
+							<label><input type="checkbox" name="jenis_pio[]" class="jenispio" value="Jenis dan Kegunaan Obat" <?php if(in_array("Jenis dan Kegunaan Obat", $arrpio) || $data_resep['Pio'] == '' || $data_resep['Pio'] == '-'){echo "CHECKED";}?>> Jenis dan Kegunaan Obat</label><br/>
+							<label><input type="checkbox" name="jenis_pio[]" class="jenispio" value="Cara Penggunaan Obat" <?php if(in_array("Cara Penggunaan Obat", $arrpio) || $data_resep['Pio'] == '' || $data_resep['Pio'] == '-'){echo "CHECKED";}?>> Cara Penggunaan Obat</label><br/>
+							<label><input type="checkbox" name="jenis_pio[]" class="jenispio" value="Frekuensi Penggunaan Obat" <?php if(in_array("Frekuensi Penggunaan Obat", $arrpio) || $data_resep['Pio'] == '' || $data_resep['Pio'] == '-'){echo "CHECKED";}?>> Frekuensi Penggunaan Obat</label><br/>
+							<label><input type="checkbox" name="jenis_pio[]" class="jenispio" value="Waktu Penggunaan Obat" <?php if(in_array("Waktu Penggunaan Obat", $arrpio) || $data_resep['Pio'] == '' || $data_resep['Pio'] == '-'){echo "CHECKED";}?>> Waktu Penggunaan Obat</label><br/>
+							<label><input type="checkbox" name="jenis_pio[]" class="jenispio" value="Efek Samping Penggunaan Obat" <?php if(in_array("Efek Samping Penggunaan Obat", $arrpio) || $data_resep['Pio'] == '' || $data_resep['Pio'] == '-'){echo "CHECKED";}?>> Efek Samping Penggunaan Obat</label><br/>
+							<label><input type="checkbox" name="jenis_pio[]" class="jenispio" value="Cara Penyimpanan Obat diRumah" <?php if(in_array("Cara Penyimpanan Obat diRumah", $arrpio) || $data_resep['Pio'] == '' || $data_resep['Pio'] == '-'){echo "CHECKED";}?>> Cara Penyimpanan Obat diRumah</label><br/>
+						</td>
+					</tr>
+					<tr>
+						<td>Tenaga Farmasi</td>
+						<td>
+							<select name="tenagafarmasi" class="form-control tenagafarmasi">
+								<?php
+									$query = mysqli_query($koneksi,"SELECT NamaPegawai FROM `tbpegawai` WHERE `KodePuskesmas` = '$kodepuskesmas' AND (`Status`='APOTEKER' OR `Status`='ASISTEN APOTEKER')");
+									while($data = mysqli_fetch_assoc($query)){
+										if($data['NamaPegawai'] == $data_resep['NamaPegawai']){
+											echo "<option value='$data[NamaPegawai]' SELECTED>$data[NamaPegawai]</option>";
+										}else{
+											echo "<option value='$data[NamaPegawai]'>$data[NamaPegawai]</option>";
+										}
+									}
+								?>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td>Status Print</td>
+						<td>
+							<select name="statusprint" class="form-control statusprint">
+								<!--<option value="Resep dan Etiket">Resep & Etiket</option>-->
+								<option value="Resep">RESEP</option>
+								<option value="Etiket">ETIKET</option>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td>Status Konseling*</td>
+						<td>
+							<select name="statuskonseling" class="form-control statuskonseling">
+								<option value="TIDAK">TIDAK</option>
+								<option value="YA">YA</option>
+							</select>
+						</td>
+					</tr>
+				</table>
+				<br/>
+				<div class="row">
+					<div class="col-sm-12">
+						<!--<a href="#" data-href="apotik_print_resep.php?norsp=<?php // echo $data_resep['NoResep']?>&ply=<?php echo $data_resep['Pelayanan']?>" class="btnsimpan btnprintresep" style="text-decoration: none;">PRINT</a>-->
+						<a href="#" data-href="apotik_print_resep_garutkab.php?norsp=<?php echo $data_resep['NoResep']?>&ply=<?php echo $data_resep['Pelayanan']?>" class="btnsimpan btnprintresep" style="text-decoration: none;">PRINT</a>
+					</div>
+					<!--<div class="col-sm-6">
+						<a href="apotik_print_etiket.php?norsp=<?php echo $data_resep['NoResep']?>&ply=<?php echo $data_resep['Pelayanan']?>" class="btnsimpan" style="text-decoration: none;">Print ETiket</a>
+					</div>-->
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="row noprint">
+		<div class="col-sm-12">
+			<div class="alert alert-block alert-success fade in">
+				<a class="close" data-dismiss="alert" href="#" aria-hidden="true">&times;</a>
+				<p>
+					<b>Perhatikan :</b><br/>
+					1. Informasi Penggnaan Obat, link dengan laporan kefarmasian<br/>
+					2. Status Konseling, link dengan laporan kefarmasian<br/>
+				</p>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script src="assets/js/jquery.js"></script>
+<script src="assets/js/chosen.js"></script>
+<script type="text/javascript">
+	$(document).ready(function() {
+		$(".editjmlobat").dblclick(function(){
+			var isi = $(this).html();
+			var idresepdetail = $(this).data("idr");
+			var batch = $(this).data("batch");
+			var kodebarang = $(this).data("kodebarang");
+			$(this).html("<input type='text' class='formedit' value='"+isi+"'>");
+			$(".formedit").focus();
+			$(".formedit").focusout(function(){
+				var isibaru = $(this).val();
+				//update ke database
+						$.post( "apotik_pelayanan_resep_manual_lihat_edit.php", { sts:'jml', idresepdetail: idresepdetail, jumlah: isibaru, jumlahlama: isi, batch: batch,kodebarang:kodebarang});
+				//update view
+				$(this).parent().html(isibaru);
+			})
+		});
+
+		$(".editsigna").dblclick(function(){
+			var isi = $(this).html();
+			var signa = isi.split(" x ");
+			var idresepdetail = $(this).data("idr");
+			var batch = $(this).data("batch");
+			var kodebarang = $(this).data("kodebarang");
+			$(this).html("<input type='text' class='formedit1' value='"+signa[0]+"'><input type='text' class='formedit2' value='"+signa[1]+"'>");
+			//$(".formedit1").focus();
+			$(".formedit1, .formedit2").focusout(function(){
+				var signa1 = $(".formedit1").val();
+				var signa2 = $(".formedit2").val();
+				//update ke database
+						$.post( "apotik_pelayanan_resep_manual_lihat_edit.php", { sts:'signa', idresepdetail: idresepdetail, signa1: signa1, signa2: signa2, batch: batch,kodebarang:kodebarang});
+				//update view
+				$(this).parent().html(signa1+" x "+signa2);
+			})
+		});
+
+		
+		$(".anjuaranclstd").dblclick(function(){
+			var tmppl = $(this);
+			var isi =tmppl.find("span").text();
+			tmppl.find(".anjuranterapi_edit").show();
+			var idresepdetail = $(this).data("idr");
+			$(".anjuranterapi_edit").change(function(){
+				var anjuran = $(this).val();
+				if(anjuran == 'Lainnya'){
+					tmppl.find(".anjuranterapilain_edit").show();
+					$(".anjuranterapilain_edit").focusout(function(){
+						var anjuran = $(this).val();
+						$.post( "apotik_pelayanan_resep_manual_lihat_edit.php", { sts:'anjuran', idresepdetail: idresepdetail, anjuran: anjuran});
+						//update view
+						tmppl.find("span").html(anjuran);
+						tmppl.find(".anjuranterapi_edit").hide();
+						tmppl.find(".anjuranterapilain_edit").hide();
+					});
+				}else{
+					//update ke database
+					$.post( "apotik_pelayanan_resep_manual_lihat_edit.php", { sts:'anjuran', idresepdetail: idresepdetail, anjuran: anjuran});
+					//update view
+					tmppl.find("span").html(anjuran);
+					tmppl.find(".anjuranterapi_edit").hide();
+				}
+			})
+		});
+		
+		
+		$(".btnadd").click(function(){
+			var clon = $(".trclones").clone();
+			clon.removeClass("trclones");
+			clon.removeAttr("style");
+			clon.find(".therapybpjs").prop('required',true);
+			//clon.find(".signa1").prop('required',true);
+			//clon.find(".signa2").prop('required',true);
+			clon.find(".jumlah").prop('required',true);
+
+			$(".trclones").before(clon);
+
+
+			//therapy BPJS
+			$('.therapybpjs').autocomplete({
+				// serviceUrl: 'get_therapy_manual.php/<?php echo str_replace(" ","-",$_GET['pelayanan']);?>',
+				serviceUrl: 'get_therapy.php?keyword=',
+				onSelect: function (suggestion) {
+					$(this).val(suggestion.value);
+					$(this).parent().find(".kodeobatbpjs").val(suggestion.kodeobatbpjs);
+					$(this).parent().find(".kodeobatlokal").val(suggestion.kodeobatlokal);
+					$(this).parent().find(".nobatch").val(suggestion.nobatch);
+					$(this).parent().find(".namaobatbpjs").val(suggestion.namaobatbpjs);
+					$(this).parent().find(".sediaobatbpjs").val(suggestion.sediaobatbpjs);
+				}
+			});
+
+			// chosen
+			$('.chosenselects').chosen();
+
+			//btnremove
+			$(".btnremove").click(function(){
+				$(this).parent().parent().remove();
+			});
+
+			$(".sts_racikan").change(function(){
+				var isi = $(this).val();
+				if(isi == 'true'){
+					$(this).parent().parent().find(".ket_racikantr").show();
+					$(this).parent().parent().find(".hides").hide();
+				}else{
+					$(this).parent().parent().find(".ket_racikantr").hide();
+					$(this).parent().parent().find(".hides").show();
+				}
+			});
+			
+			$(".anjuranterapi").change(function(){
+				if($(this).val() == 'Lainnya'){
+					$(".formanjuranlainnya").show();
+				}else{
+					$(".formanjuranlainnya").hide();
+				}
+			});
+
+		});
+
+		$(".btnprintresep").click(function(){
+			var tenaga = $(".tenagafarmasi").val();
+			var statusprint = $(".statusprint").val();
+			var statuskonseling = $(".statuskonseling").val();
+			var jenispio = $('.jenispio:checked').map(function() { return this.value;}).get().join(',');
+			if(tenaga != ''){
+				var link = $(this).data('href');
+				window.location.href = link+'&tenagafarmasi='+tenaga+'&jenis_pio='+jenispio+'&statusprint='+statusprint+'&statuskonseling='+statuskonseling;
+			}else{
+				alert('silahkan pilih tenaga farmasi...');
+			}
+		});
+	});
+</script>	

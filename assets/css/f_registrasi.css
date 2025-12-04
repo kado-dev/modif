@@ -1,0 +1,129 @@
+
+.font_tabel{
+	font-size:14px;
+	font-family: malgun gothic;
+}
+.tableborder tr{
+	border-bottom:0px solid #eee;
+}
+.tableborder td{
+	height:23px;
+}
+
+.heading{
+	background:#F5F5F5;
+	padding:10px 10px;
+	color:#888;
+	text-align:center;
+	border-radius:4px 4px 0px 0px;
+	margin-top:-9px;
+	margin-left:-9px;
+	margin-right:-9px;
+	margin-bottom:15px;
+	font-family: Malgun Gothic;
+	font-weight: bold;
+	font-size: 14px;
+}
+
+.sidebars{
+	background:#fff;
+	border:1px solid #ddd;
+	border-radius:10px;
+	box-shadow:0px 0px 10px #bbb;
+	padding:9px;
+	display:block;
+	color:#111;
+	text-align:left;
+	margin: 0px;
+}
+
+.tabel_judul th{
+	background: #fff;
+	border-collapse: separate;
+	font-size: 12px;
+	font-family: malgun gothic;
+	line-height: 20px;
+	text-align:center;
+	padding: 5px 10px;
+	color:#000;
+}	
+.tabel_isi{
+	background:#fff;
+	color: #000;
+	padding: 5px 10px;
+	text-align:center;
+}
+.kartu_pasien>p{
+	line-height:7px;
+}
+.clsbgkartu{
+	position:absolute;
+	top:170px;
+	left:45px;
+	right:25px;
+	z-index:1;
+	width:78%;
+	height:190px;
+}
+
+.tbnama{
+	position:absolute;
+	top:230px;
+	left:60px;
+	z-index:10000;
+	font-family:malgun gothic;
+}	
+.print_etiket{
+	background:#ddd;
+	padding:30px 15px 30px 15px;
+	margin-bottom:5px;
+}
+@media print{
+	@page{
+		size:  auto;   /* auto is the initial value */
+		margin: 0mm;  /* this affects the margin in the printer settings */
+	}
+	html, body {
+		height:100%; 
+		margin: 0 !important; 
+		padding: 0 !important;
+		overflow: hidden;
+		background-color: #FFFFFF; 
+	  }
+
+	body{
+		visibility:hidden;
+	}
+
+	.clsbgkartu{
+		top:0px;
+		left:0px;
+		right:0px;
+		width:9cm;
+		height:5.5cm;
+	}
+	.tbnama{
+		top:2cm;
+		left:0.5cm;
+	}	
+	.print_etiket{
+		position:fixed;
+		top:0mm;
+		left:7mm;
+		right:0;
+		z-index:10;
+		visibility:visible;
+		margin:0px;
+		background:transparent;
+	}
+	
+	.kartu_pasien{
+		position:fixed;
+		top:1cm;
+		left:1cm;
+		right:0;
+		z-index:10;
+		visibility:visible;
+		margin:0px;
+	}
+}

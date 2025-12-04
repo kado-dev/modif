@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+<head>
+	<title>Peringatan!!</title>
+</head>
+<body></body>
+</html>
+<title></title>
+<style type="text/css">body { text-align: center; padding: 20px; }
+  @media (min-width: 768px){
+    body{ padding-top: 150px; }
+  }
+  h1 { font-size: 50px; }
+  body { font: 20px Helvetica, sans-serif; color: #333; }
+  article { display: block; text-align: left; max-width: 650px; margin: 0 auto; }
+  a { color: #dc8100; text-decoration: none; }
+  a:hover { color: #333; text-decoration: none; }
+</style>
+<article>
+<h1>Kami akan Sudah Pindah Server</h1>
+
+<div>
+<p>Maaf atas ketidaknyamanannya, saat ini kami sudah memindahkan semua server ke PDN <strong>prioritas akses untuk aplikasi SIMPUS</strong> pada <strong>https://simpus.bandungkab.go.id dan https://simpus3.bandungkab.go.id </strong>. Jika ada hal-hal yang Anda perlukan dari Kami, silakan untuk menghubungi kami melalui salah satu Perangkat Daerah: DINAS KESEHATAN| DISKOMINFO | . Kami akan selalu memperbaiki Layanan!</p>
+
+<p>&mdash; Tim SIMPUS Kabupaten Bandung</p>
+</div>
+</article>

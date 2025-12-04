@@ -1,0 +1,28 @@
+.kotak_panel{
+	background: #fff;
+    padding: 20px 10px 20px 80px;	
+    margin: 5px 0px;
+	font-family: 'Poppins', sans-serif;
+	text-align: left;
+	color:#000;
+	border-radius: 10px;
+	/* border-style: solid; */
+	/* border-color: none; */
+	/* box-shadow: 0px 0px 12px #cecece; */
+	box-shadow: 0 4px 6px -2px #a8a8a8;
+}
+.kotak_panel i{
+	position:absolute;
+	left:35px;
+	top:40px;
+	color: #fff;
+}
+.font30{
+	font-size: 30px;
+}
+.fa-gradient {
+	background: rgb(12,195,168);
+	background: linear-gradient(90deg, rgba(12,195,168,1) 0%, rgba(130,235,188,1) 100%);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;	
+}

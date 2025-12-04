@@ -1,0 +1,18 @@
+.autocomplete-suggestions { border: 1px solid #999; background: #FFF; overflow: auto; font-size:15px; width:auto}
+.autocomplete-suggestion { padding: 2px 5px; white-space: nowrap; overflow: hidden; }
+.autocomplete-selected { background: #F9F9F9; cursor: pointer;}
+.autocomplete-suggestions strong { font-weight: normal; color: #519AA5; }
+.list_item_container {
+    width: 300px;
+    height: 60px;
+    padding: 5px 0;
+}
+.image {
+    margin-right: 7px;
+    float: left;
+}
+.description {
+    font-style: italic;
+    font-size: 0.8em;
+    color: #000;
+}

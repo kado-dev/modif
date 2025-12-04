@@ -1,0 +1,6 @@
+{
+    "require": {
+        "phpoffice/phpspreadsheet": "^1.20",
+        "nullpunkt/lz-string-php": "^1.3"
+    }
+}

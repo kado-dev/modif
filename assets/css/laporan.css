@@ -1,0 +1,55 @@
+<style>
+.printheader{
+	margin-top:-30px;
+	margin-left:px;
+	margin-right:0px;
+	text-align:center;
+	display:none;
+}
+.printheader h4{
+	font-size:12px;
+	font-family: "Trebuchet MS", "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Tahoma, sans-serif;
+}
+.printheader p{
+	font-size:10px;
+}
+.printbody{
+	margin-left:0px;
+	margin-right:0px;
+	display: none;
+}
+.table-responsive{
+	font-family: "Trebuchet MS", "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Tahoma, sans-serif;
+}
+.atastabel{
+	display:none;
+	margin-top:10px;
+}
+.bawahtabel{
+	margin-top:20px;
+	margin-bottom:10px;
+	margin-left:50px;
+	display:none;
+}
+
+@media print{
+	body{
+		padding:0px;
+	}
+	.noprint{
+		display:none;
+	}
+	.printheader{
+		display:block;
+	}
+	.printbody{
+		display:block;
+	}
+	.atastabel{
+		display:block;
+	}
+	.bawahtabel{
+		display:block;
+	}
+}
+</style>
