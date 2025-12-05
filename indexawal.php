@@ -226,7 +226,7 @@
 					// $convert = mb_convert_encoding($str, "UTF-16LE");
 					// print_r($convert);
 				?>
-				<p style="color: #fff; font-weight: bold;" align="center"><?php echo date("Y");?> | Sehat <br/> Puskesmas Linggar (G) Kabupaten Bandung</p>
+				<p style="color: #fff; font-weight: bold;" align="center"><?php echo date("Y");?> | Sehat <br/> Dinas Kesehatan (G) Kabupaten Bandung</p>
 			</div>
 		</div>
 	</div>	

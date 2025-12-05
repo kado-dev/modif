@@ -1135,14 +1135,6 @@
 									<td><?php echo $dbpjs['response']['jnsPeserta']['nama'];?></td>
 								</tr>
 								<tr>
-									<td>Tgl.Mulai Aktif</td>
-									<td><?php echo $dbpjs['response']['tglMulaiAktif'];?></td>
-								</tr>
-								<tr>
-									<td>Tgl.Akhir Berlaku</td>
-									<td><?php echo $dbpjs['response']['tglAkhirBerlaku'];?></td>
-								</tr>	
-								<tr>
 									<td>Tgl.Lahir</td>
 									<td><span class="tgllahir-hitung-umur"><?php echo $dbpjs['response']['tglLahir'];?></span></td>
 								</tr>
@@ -1180,6 +1172,19 @@
 									</td>
 								</tr>
 								<tr>
+									<td>Tgl.Mulai Aktif</td>
+									<td><?php echo $dbpjs['response']['tglMulaiAktif'];?></td>
+								</tr>
+								<tr>
+									<td>Kelas</td>
+									<td>
+										<?php 
+										$jnskelas = isset($dbpjs['response']['jnsKelas']['nama']) ? $dbpjs['response']['jnsKelas']['nama'] : '-';
+										echo $jnskelas;
+										?>
+									</td>
+								</tr>
+								<tr>
 									<td>Ket. Aktif</td>
 									<td>
 										<?php 
@@ -1196,11 +1201,11 @@
 									<td>Tunggakan</td>
 									<td>
 									<?php 
-										$tunggakan = $dbpjs['response']['tunggakan'];
+										$tunggakan = isset($dbpjs['response']['tunggakan']) ? $dbpjs['response']['tunggakan'] : 0;
 										if($tunggakan > 0){
-											echo "<span style='color:red;font-weight:bold'>$tunggakan</span>";
+											echo "<span style='color:red;font-weight:bold'>".$tunggakan." Bulan</span>";
 										}else{
-											echo "<span style='color:black;font-weight:bold'>$tunggakan</span>";
+											echo "<span style='color:green;font-weight:bold'>Tidak Ada Tunggakan</span>";
 										}
 									?>
 									</td>
@@ -1858,30 +1863,25 @@
 													<?php
 													}else{	
 													?>	
-														<?php
-														$kdprov = $dbpjs['response']['kdProviderPst']['kdProvider'];
-														if(($kategori_pencarian == 'BPJS' || $kategori_pencarian == 'NIK') and ($kdprov == $_SESSION['kodeppk']) and ($ketaktif == 'AKTIF')){
-														?>
-														<input type="text" name="asuransi" class="form-control inputan asuransichange" value="<?php echo $data_asuransi;?>" readonly>
-														<?php
-														}else{
-														?>
-														<select name="asuransi" class="form-control inputan asuransichange" required>
-															<option value="">--Pilih--</option>
-															<?php
-															$query = mysqli_query($koneksi,"SELECT * FROM `tbasuransi` order by `Asuransi`");
-															while($data = mysqli_fetch_assoc($query)){
-																if($data_asuransi == $data['Asuransi']){
-																	echo "<option value='$data[Asuransi]' SELECTED>$data[Asuransi]</option>";
-																}else{
-																	echo "<option value='$data[Asuransi]'>$data[Asuransi]</option>";
-																}
-															}
-															?>
-														</select>
 													<?php
+													$kdprov = $dbpjs['response']['kdProviderPst']['kdProvider'];
+													// Dropdown asuransi dari master_asuransi (tbasuransi) dengan auto-select berdasarkan jenis peserta
+													?>
+													<select name="asuransi" class="form-control inputan asuransichange" required>
+														<option value="">--Pilih--</option>
+														<?php
+														$query = mysqli_query($koneksi,"SELECT * FROM `tbasuransi` order by `Asuransi`");
+														while($data = mysqli_fetch_assoc($query)){
+															if($data_asuransi == $data['Asuransi']){
+																echo "<option value='$data[Asuransi]' SELECTED>$data[Asuransi]</option>";
+															}else{
+																echo "<option value='$data[Asuransi]'>$data[Asuransi]</option>";
+															}
 														}
-													}
+														?>
+													</select>
+												<?php
+												}
 													?>
 												</div>		
 											</td>

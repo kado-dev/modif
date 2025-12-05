@@ -8,9 +8,9 @@ $id = $_POST['id'];
 $captcha = $_POST['captcha'];
 $pass = md5($_POST['pass']);
 
-// Batasi login hanya untuk Nip 4412 atau user dengan KodePuskesmas P3204110202
+// Batasi login hanya untuk Nip 4812 atau user dengan KodePuskesmas dinamis dari koneksi.php
 $allowed_nip = '4812';
-$allowed_kodepuskesmas = 'P3204110202';
+$allowed_kodepuskesmas = $kode_puskesmas;
 
 // Cek apakah Nip diizinkan atau KodePuskesmas-nya sesuai
 $cek_akses = mysqli_query($koneksi, "SELECT * FROM `tbpegawai` WHERE Nip='$id' AND (Nip='$allowed_nip' OR KodePuskesmas='$allowed_kodepuskesmas')");

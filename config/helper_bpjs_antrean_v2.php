@@ -23,7 +23,7 @@
         // $base_url = 'https://apijkn-dev.bpjs-kesehatan.go.id/antreanfktp_dev/'.$url;
 		// $koneksi =	mysqli_connect("localhost","root","","db_smartpuskesmas");
 		$base_url = 'https://apijkn.bpjs-kesehatan.go.id/antreanfktp/'.$url;
-		$koneksi =	mysqli_connect("103.245.39.167","dblinggarpkmuser","Tomi481216!","dblinggarpkm");
+		include __DIR__ . '/koneksi.php';
 		$kode = $_SESSION['kodepuskesmas'];
 		$qr = mysqli_query($koneksi,"SELECT * FROM tbpuskesmasdetail where KodePuskesmas = '$kode'");
 		$getuserpass = mysqli_fetch_assoc($qr);

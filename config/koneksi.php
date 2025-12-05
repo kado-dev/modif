@@ -3,6 +3,7 @@
 	$username = "dblinggarpkmuser";
 	$password = "Tomi481216!";
 	$nama_db = "dblinggarpkm";
+	$kode_puskesmas = "P3204110202";
 	$koneksi =mysqli_connect($servername,$username,$password,$nama_db);
 
 	//$servername = "103.125.88.159";
