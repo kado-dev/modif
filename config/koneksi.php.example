@@ -1,0 +1,10 @@
+<?php
+	$servername = "";
+	$username = "";
+	$password = "Tomi481216!";
+	$nama_db = "";
+	$kode_puskesmas = "";
+	$koneksi =mysqli_connect($servername,$username,$password,$nama_db);
+
+
+?>
